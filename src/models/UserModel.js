@@ -1,7 +1,7 @@
 /**
  * @file Defines the user model.
  * @module models/UserModel
- * @author Mats Loock
+ * @author Mats Loock & Sabrina Prichard-Lybeck <sp223kz@student.lnu.se>
  * @version 3.0.0
  */
 
@@ -9,7 +9,6 @@ import bcrypt from 'bcrypt'
 import mongoose from 'mongoose'
 import validator from 'validator'
 import { BASE_SCHEMA } from './baseSchema.js'
-import { write } from 'fs'
 
 const { isEmail } = validator
 
@@ -90,9 +89,9 @@ schema.pre('save', async function () {
 schema.statics.authenticate = async function (username, password) {
   const userDocument = await this.findOne({ username })
 
-  // If no user found or password is wrong, throw an error.
-  if (!userDocument || !(await bcrypt.compare(password, userDocument?.password))) {
-    throw new Error('Invalid credentials.')
+  // If no user found or password is wrong or no username or password is provided, throw an error.
+  if (!userDocument || !(await bcrypt.compare(password, userDocument?.password)) || username.trim() === '' || username === undefined || password.trim() === '' || password === undefined) {
+    throw new Error('Invalid credentials')
   }
 
   // User found and password correct, return the user.

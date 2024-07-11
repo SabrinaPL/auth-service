@@ -9,6 +9,7 @@ import http from 'node:http'
 import { logger } from '../../config/winston.js'
 import { JsonWebToken } from '../../lib/JsonWebToken.js'
 import { UserModel } from '../../models/UserModel.js'
+import { LOGIN_CUSTOM_STATUS_CODES, REGISTER_CUSTOM_STATUS_CODES } from '../../utils/customErrors.js'
 
 /**
  * Encapsulates a controller.
@@ -50,9 +51,15 @@ export class AccountController {
           // refresh_token: refreshToken
         })
     } catch (error) {
-      // Authentication failed.
-      const httpStatusCode = 401
-      const err = new Error(http.STATUS_CODES[httpStatusCode])
+      // Authentication failed. 
+      // Status code is defaulted to 500 (Internal Server Error).
+      let httpStatusCode = 500
+
+      if (error.message === 'Invalid credentials') {
+        httpStatusCode = 401
+      }
+
+      const err = new Error(LOGIN_CUSTOM_STATUS_CODES[httpStatusCode] || http.STATUS_CODES[httpStatusCode])
       err.status = httpStatusCode
       err.cause = error
 
