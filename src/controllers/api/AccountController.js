@@ -104,15 +104,15 @@ export class AccountController {
       
       let httpStatusCode = 500
 
-      if (error.code === 11_000) {
-        // Duplicated keys.
+      if (error.code === 11000) {
+        // Duplicated keys, which means that the user already exists.
         httpStatusCode = 409
       } else if (error.name === 'ValidationError') {
         // Validation error(s).
         httpStatusCode = 400
       }
 
-      const err = new Error(http.STATUS_CODES[httpStatusCode])
+      const err = new Error(REGISTER_CUSTOM_STATUS_CODES[httpStatusCode] || http.STATUS_CODES[httpStatusCode])
       err.status = httpStatusCode
       err.cause = error
 
