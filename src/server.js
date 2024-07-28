@@ -1,7 +1,7 @@
 /**
  * @file Defines the main application.
  * @module src/server
- * @author Mats Loock
+ * @author Mats Loock & Sabrina Prichard-Lybeck <sp223kz@student.lnu.se>
  * @version 3.1.0
  */
 
@@ -10,6 +10,7 @@ import cors from 'cors'
 import express from 'express'
 import httpContext from 'express-http-context' // Must be first!
 import helmet from 'helmet'
+import rateLimit from 'express-rate-limit'
 import { randomUUID } from 'node:crypto'
 import http from 'node:http'
 import { connectToDatabase } from './config/mongoose.js'
@@ -41,7 +42,7 @@ try {
 
   // Use a morgan logger.
   app.use(morganLogger)
-
+  
   // Middleware to be executed before the routes.
   app.use((req, res, next) => {
     // Add a request UUID to each request and store information about
@@ -54,6 +55,18 @@ try {
 
   // Register routes.
   app.use('/', router)
+
+  // Rate limiting middleware for Express apps (code from https://www.npmjs.com/package/express-rate-limit).
+  const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes.
+    limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+    standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header.
+    legacyHeaders: false // Disable the `X-RateLimit-*` headers.
+  })
+
+  // Apply the rate limiting middleware to login and register routes.
+  app.use('/login', limiter)
+  app.use('/register', limiter)
 
   // Error handler.
   app.use((err, req, res, next) => {
