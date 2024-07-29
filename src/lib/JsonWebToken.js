@@ -1,7 +1,7 @@
 /**
  * @file  Provides helper methods for working with JSON Web Tokens (JWTs).
  * @module lib/JsonWebTokens
- * @author Mats Loock
+ * @author Mats Loock & Sabrina Prichard-Lybeck <sp223kz@student.lnu.se>
  * @version 1.0.0
  */
 
@@ -58,10 +58,13 @@ export class JsonWebToken {
       username: user.username
     }
 
+    // Replace '\n' in the secret string with a newline character for correct formatting, as suggested by chatGPT.
+    const privateKey = secret.replace(/\\n/g, '\n')
+
     return new Promise((resolve, reject) => {
       jwt.sign(
         payload,
-        secret,
+        privateKey,
         {
           algorithm: 'RS256',
           expiresIn

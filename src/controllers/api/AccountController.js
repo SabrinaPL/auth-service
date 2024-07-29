@@ -34,7 +34,7 @@ export class AccountController {
         process.env.ACCESS_TOKEN_SECRET,
         process.env.ACCESS_TOKEN_LIFE
       )
- 
+
       // // Create the refresh token with the longer lifespan.
       // -----------------------------------------------------------------
       // 👉👉👉 This is the place to create and handle the refresh token!
