@@ -21,7 +21,8 @@ const convertOptions = {
    * @see https://mongoosejs.com/docs/api.html#document_Document-toObject
    */
   transform: (doc, ret) => {
-    logger.silly('Transforming document', { doc: doc.toObject({ transform: null }) })
+    // Removed the doc.toObject() part since it caused a recursive call and a stack overflow, with the help of chatGPT.
+    logger.silly('Transforming document', { id: doc._id })
     delete ret._id // Exclude the _id property.
     logger.silly('Transformed document', { ret })
     return ret
