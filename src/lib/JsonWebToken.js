@@ -12,35 +12,6 @@ import jwt from 'jsonwebtoken'
  */
 export class JsonWebToken {
   /**
-   * Decodes a JWT and returns the user object extracted from the payload.
-   *
-   * @param {string} token - The JWT to decode.
-   * @param {string} key - The secret key used for verifying the JWT.
-   * @returns {Promise<object>} A Promise that resolves to the user object extracted from the JWT payload.
-   */
-  static async decodeUser (token, key) {
-    return new Promise((resolve, reject) => {
-      jwt.verify(token, key, (error, decoded) => {
-        if (error) {
-          reject(error)
-          return
-        }
-
-        const user = {
-          id: decoded.sub,
-          firstName: decoded.firstName,
-          lastName: decoded.lastName,
-          email: decoded.email,
-          permissionLevel: decoded.permissionLevel,
-          username: decoded.username
-        }
-
-        resolve(user)
-      })
-    })
-  }
-
-  /**
    * Encodes user information into a JSON Web Token (JWT) payload.
    *
    * @param {object} user - The user object containing user information to encode.
