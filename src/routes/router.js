@@ -1,7 +1,7 @@
 /**
  * @file Defines the main router.
  * @module routes/router
- * @author Mats Loock
+ * @author Mats Loock & Sabrina Prichard-Lybeck <sp223kz@student.lnu.se>
  * @version 3.0.0
  */
 
@@ -11,7 +11,7 @@ import { router as v1Router } from './api/v1/router.js'
 
 export const router = express.Router()
 
-router.use('/api/v1', v1Router)
+router.use('/', v1Router)
 
 // Catch 404 (ALWAYS keep this as the last route).
 router.use('*', (req, res, next) => {
