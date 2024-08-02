@@ -45,7 +45,7 @@ export class AccountController {
       logger.silly('Authenticated user', { user })
 
       res
-        .status(201)
+        .status(200)
         .json({
           access_token: accessToken
           // refresh_token: refreshToken
