@@ -42,7 +42,7 @@ try {
 
   // Use a morgan logger.
   app.use(morganLogger)
-  
+
   // Middleware to be executed before the routes.
   app.use((req, res, next) => {
     // Add a request UUID to each request and store information about

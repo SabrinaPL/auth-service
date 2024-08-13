@@ -6,6 +6,7 @@
  */
 
 import http from 'node:http'
+import sanitizeHtml from 'sanitize-html'
 import { logger } from '../../config/winston.js'
 import { JsonWebToken } from '../../lib/JsonWebToken.js'
 import { UserModel } from '../../models/UserModel.js'
@@ -27,6 +28,8 @@ export class AccountController {
       logger.silly('Authenticating user', { body: req.body })
 
       // Sanitize the input.
+      req.body.username = sanitizeHtml(req.body.username)
+      req.body.password = sanitizeHtml(req.body.password)
 
       const userDocument = await UserModel.authenticate(req.body.username, req.body.password)
       const user = userDocument.toObject()
@@ -80,9 +83,14 @@ export class AccountController {
     try {
       logger.silly('Creating new user document', { body: req.body })
 
-      const { username, password, firstName, lastName, email } = req.body
-
       // Sanitize the input.
+      req.body.username = sanitizeHtml(req.body.username)
+      req.body.password = sanitizeHtml(req.body.password)
+      req.body.firstName = sanitizeHtml(req.body.firstName)
+      req.body.lastName = sanitizeHtml(req.body.lastName)
+      req.body.email = sanitizeHtml(req.body.email)
+
+      const { username, password, firstName, lastName, email } = req.body
 
       const userDocument = await UserModel.create({
         username,
@@ -90,7 +98,7 @@ export class AccountController {
         firstName,
         lastName,
         email,
-        permissionLevel: 1
+        permissionLevel: 15
       })
 
       logger.silly('Created new user document')
@@ -105,7 +113,7 @@ export class AccountController {
         .json({ id: userDocument.id })
     } catch (error) {
       logger.error('Failed to create new user document', { error })
-    
+
       let httpStatusCode = 500
 
       if (error.code === 11000) {

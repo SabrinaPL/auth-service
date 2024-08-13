@@ -17,14 +17,14 @@ const schema = new mongoose.Schema({
   firstName: {
     type: String,
     required: [true, 'First name is required.'],
-    trim: true, 
-    maxLength: [256, 'The first name must be of maximum length 256 characters.'], 
+    trim: true,
+    maxLength: [256, 'The first name must be of maximum length 256 characters.'],
     minLength: [1, 'The first name must be of minimum length 1 characters.']
   },
   lastName: {
     type: String,
     required: [true, 'Last name is required.'],
-    trim: true, 
+    trim: true,
     maxLength: [256, 'The last name must be of maximum length 256 characters.'],
     minLength: [1, 'The last name must be of minimum length 1 characters.']
   },
@@ -50,7 +50,7 @@ const schema = new mongoose.Schema({
     type: String,
     required: [true, 'Password is required.'],
     minLength: [10, 'The password must be of minimum length 10 characters.'],
-    maxLength: [256, 'The password must be of maximum length 256 characters.'], 
+    maxLength: [256, 'The password must be of maximum length 256 characters.'],
     writeOnly: true
   },
   permissionLevel: {
