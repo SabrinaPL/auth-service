@@ -5,10 +5,14 @@
   "main": "./src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "lint": "eslint ."
+  },
+  "eslintConfig": {
+    "extends": "@lnu"
   },
   "type": "module",
-  "author": "",
+  "author": "Sabrina Prichard-Lybeck <sp223kz@student.lnu.se>",
   "license": "ISC",
   "dependencies": {
     "@lnu/json-js-cycle": "^2.0.5",
@@ -24,7 +28,11 @@
     "mongoose": "^8.4.3",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.4",
+    "sanitize-html": "^2.13.0",
     "validator": "^13.12.0",
     "winston": "^3.13.0"
+  },
+  "devDependencies": {
+    "@lnu/eslint-config": "^1.1.10"
   }
 }

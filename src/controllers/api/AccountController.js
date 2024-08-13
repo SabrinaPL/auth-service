@@ -26,13 +26,15 @@ export class AccountController {
     try {
       logger.silly('Authenticating user', { body: req.body })
 
+      // Sanitize the input.
+
       const userDocument = await UserModel.authenticate(req.body.username, req.body.password)
       const user = userDocument.toObject()
 
       // Create the access token with the shorter lifespan.
       const accessToken = await JsonWebToken.encodeUser(user,
         process.env.ACCESS_TOKEN_SECRET,
-        process.env.ACCESS_TOKEN_LIFE
+        parseInt(process.env.ACCESS_TOKEN_LIFE)
       )
 
       // // Create the refresh token with the longer lifespan.
@@ -51,7 +53,7 @@ export class AccountController {
           // refresh_token: refreshToken
         })
     } catch (error) {
-      // Authentication failed. 
+      // Authentication failed.
       // Status code is defaulted to 500 (Internal Server Error).
       let httpStatusCode = 500
 
@@ -80,6 +82,8 @@ export class AccountController {
 
       const { username, password, firstName, lastName, email } = req.body
 
+      // Sanitize the input.
+
       const userDocument = await UserModel.create({
         username,
         password,
@@ -101,7 +105,7 @@ export class AccountController {
         .json({ id: userDocument.id })
     } catch (error) {
       logger.error('Failed to create new user document', { error })
-      
+    
       let httpStatusCode = 500
 
       if (error.code === 11000) {
