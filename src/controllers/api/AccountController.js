@@ -46,8 +46,6 @@ export class AccountController {
         parseInt(process.env.REFRESH_TOKEN_LIFE)
       )
 
-      // Can I implement some kind of logic to enable the client to choose a storage preference, depending on the client's needs (if it's a browser, a mobile app, IoT etc)? Different clients might have different needs and also different recommendations regarding security, to mitigate cyber security breaches. A browser client might prefer the refresh token to be stored in a cookie whereas a mobile app might prefer to store it in a secure storage?
-
       // Determine the storage preference for the refresh token (info to be sent in the header from the client, as suggested by copilot).
       const clientType = req.headers['client-type']
 
@@ -55,20 +53,29 @@ export class AccountController {
       if (clientType === 'iot' || clientType === 'mobile-native-app' || clientType === 'desktop-native-app') {
         // Return the refresh token in the response body.
         // IoT, mobile and desktop native apps can store the refresh token in a secure storage and aren't vulnerable to XSS or CSRF attacks in the same way as web clients.
+        res
+          .status(200)
+          .json({
+            access_token: accessToken,
+            refresh_token: refreshToken
+          })
       } else {
-        // Store the refresh token in a cookie as a default storage method.
+        // Store the refresh token in a cookie as a default storage method to be sent in the response and send the access token directly in the response.
+        res
+          .status(200)
+          .cookie('refreshToken', refreshToken, {
+            httpOnly: true, // Cookie is not accessible via JS, to prevent XSS attacks.
+            secure: process.env.NODE_ENV === 'production', // Only send the cookie over HTTPS in production for added security.
+            sameSite: 'None' // Required for cross-origin requests.
+          })
+          .json({
+            access_token: accessToken
+          })
       }
 
       // Should I have a specific endpoint for refresh token handling? For example 'login/refresh'? Since the refresh token isn't needed in every request, only once the access token has expired.
 
       logger.silly('Authenticated user', { user })
-
-      res
-        .status(200)
-        .json({
-          access_token: accessToken,
-          refresh_token: refreshToken
-        })
     } catch (error) {
       // Authentication failed.
       // Status code is defaulted to 500 (Internal Server Error).
