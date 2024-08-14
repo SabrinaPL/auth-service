@@ -40,20 +40,23 @@ export class AccountController {
         parseInt(process.env.ACCESS_TOKEN_LIFE)
       )
 
-      // // Create the refresh token with the longer lifespan.
-      // -----------------------------------------------------------------
-      // 👉👉👉 This is the place to create and handle the refresh token!
-      //         Quite a lot of additional implementation is required!!!
-      // -----------------------------------------------------------------
-      // const refreshToken = ...
+      // Create the refresh token with the longer lifespan.
+      const refreshToken = await JsonWebToken.encodeUser(user,
+        process.env.REFRESH_TOKEN_SECRET,
+        parseInt(process.env.REFRESH_TOKEN_LIFE)
+      )
+
+      // Can I implement some kind of logic to enable the client to choose a storage preference, depending on the client's needs (if it's a browser, a mobile app, IoT etc)? Different clients might have different needs and also different recommendations regarding security, to mitigate cyber security breaches. A browser client might prefer the refresh token to be stored in a cookie whereas a mobile app might prefer to store it in a secure storage?
+
+      // Should I have a specific endpoint for refresh token handling or should I handle it in the same endpoint as the login endpoint?
 
       logger.silly('Authenticated user', { user })
 
       res
         .status(200)
         .json({
-          access_token: accessToken
-          // refresh_token: refreshToken
+          access_token: accessToken,
+          refresh_token: refreshToken
         })
     } catch (error) {
       // Authentication failed.
