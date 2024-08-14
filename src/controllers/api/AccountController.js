@@ -48,7 +48,18 @@ export class AccountController {
 
       // Can I implement some kind of logic to enable the client to choose a storage preference, depending on the client's needs (if it's a browser, a mobile app, IoT etc)? Different clients might have different needs and also different recommendations regarding security, to mitigate cyber security breaches. A browser client might prefer the refresh token to be stored in a cookie whereas a mobile app might prefer to store it in a secure storage?
 
-      // Should I have a specific endpoint for refresh token handling or should I handle it in the same endpoint as the login endpoint?
+      // Determine the storage preference for the refresh token (info to be sent in the header from the client, as suggested by copilot).
+      const clientType = req.headers['client-type']
+
+      // Set the refresh token in the appropriate storage (local storage is risky since malicious users could in for example an XSS attack gain access to the refresh tokens stored there, therefore it's not recommended from my research on refresh tokens).
+      if (clientType === 'iot' || clientType === 'mobile-native-app' || clientType === 'desktop-native-app') {
+        // Return the refresh token in the response body.
+        // IoT, mobile and desktop native apps can store the refresh token in a secure storage and aren't vulnerable to XSS or CSRF attacks in the same way as web clients.
+      } else {
+        // Store the refresh token in a cookie as a default storage method.
+      }
+
+      // Should I have a specific endpoint for refresh token handling? For example 'login/refresh'? Since the refresh token isn't needed in every request, only once the access token has expired.
 
       logger.silly('Authenticated user', { user })
 
