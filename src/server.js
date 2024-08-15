@@ -11,6 +11,7 @@ import express from 'express'
 import httpContext from 'express-http-context' // Must be first!
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
+import useragent from 'express-useragent'
 import { randomUUID } from 'node:crypto'
 import http from 'node:http'
 import { connectToDatabase } from './config/mongoose.js'
@@ -43,6 +44,9 @@ try {
   // Use a morgan logger.
   app.use(morganLogger)
 
+  // Middleware to extract the user agent from the request.
+  app.use(useragent.express())
+
   // Middleware to be executed before the routes.
   app.use((req, res, next) => {
     // Add a request UUID to each request and store information about
@@ -66,6 +70,7 @@ try {
 
   // Apply the rate limiting middleware to login and register routes.
   app.use('/login', limiter)
+  app.use('/login/refresh', limiter)
   app.use('/register', limiter)
 
   // Error handler.

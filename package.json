@@ -22,6 +22,7 @@
     "express": "^4.19.2",
     "express-http-context": "^1.2.4",
     "express-rate-limit": "^7.4.0",
+    "express-useragent": "^1.0.15",
     "helmet": "^7.1.0",
     "http-errors": "^2.0.0",
     "jsonwebtoken": "^9.0.2",

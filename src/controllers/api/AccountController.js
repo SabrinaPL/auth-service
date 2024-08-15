@@ -47,12 +47,12 @@ export class AccountController {
       )
 
       // Determine the storage preference for the refresh token (info to be sent in the header from the client, as suggested by copilot).
-      const clientType = req.headers['client-type']
+      const clientType = req.useragent
 
       // Set the refresh token in the appropriate storage (local storage is risky since malicious users could in for example an XSS attack gain access to the refresh tokens stored there, therefore it's not recommended from my research on refresh tokens).
-      if (clientType === 'iot' || clientType === 'mobile-native-app' || clientType === 'desktop-native-app') {
+      if (clientType.browser === null) {
         // Return the refresh token in the response body.
-        // IoT, mobile and desktop native apps can store the refresh token in a secure storage and aren't vulnerable to XSS or CSRF attacks in the same way as web clients.
+        // IoT, mobile and desktop native apps etc can store the refresh token in a secure storage and aren't vulnerable to XSS or CSRF attacks in the same way as web clients.
         res
           .status(200)
           .json({
@@ -66,14 +66,12 @@ export class AccountController {
           .cookie('refreshToken', refreshToken, {
             httpOnly: true, // Cookie is not accessible via JS, to prevent XSS attacks.
             secure: process.env.NODE_ENV === 'production', // Only send the cookie over HTTPS in production for added security.
-            sameSite: 'None' // Required for cross-origin requests.
+            sameSite: 'Lax'
           })
           .json({
             access_token: accessToken
           })
       }
-
-      // Should I have a specific endpoint for refresh token handling? For example 'login/refresh'? Since the refresh token isn't needed in every request, only once the access token has expired.
 
       logger.silly('Authenticated user', { user })
     } catch (error) {
@@ -109,7 +107,7 @@ export class AccountController {
       req.body.refreshToken = sanitizeHtml(req.body.refreshToken)
 
       // Decode the refresh token.
-      const decodedUser = await JsonWebToken.decodeUser(req.body.refreshToken, process.env.REFRESH_TOKEN_SECRET)
+      const decodedUser = await JsonWebToken.decodeUser(req.body.refreshToken, process.env.REFRESH_TOKEN_PUBLIC_KEY)
 
       if (!decodedUser) {
         throw new Error('Invalid refresh token')
