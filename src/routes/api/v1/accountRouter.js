@@ -1,7 +1,7 @@
 /**
  * @file Defines the account router.
  * @module routes/accountRouter
- * @author Mats Loock
+ * @author Mats Loock & Sabrina Prichard-Lybeck <sp223kz@student.lnu.se>
  * @version 3.0.0
  */
 

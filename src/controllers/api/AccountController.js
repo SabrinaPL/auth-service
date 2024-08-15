@@ -46,6 +46,10 @@ export class AccountController {
         parseInt(process.env.REFRESH_TOKEN_LIFE)
       )
 
+      if (!accessToken || !refreshToken) {
+        throw new Error('Invalid credentials')
+      }
+
       // Determine the storage preference for the refresh token (info to be sent in the header from the client, as suggested by copilot).
       const clientType = req.useragent
 
