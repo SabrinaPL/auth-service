@@ -94,6 +94,59 @@ export class AccountController {
   }
 
   /**
+   * Method for refreshing the access token using the refresh token.
+   *
+   * @param {*} req - Express request object.
+   * @param {*} res - Express response object.
+   * @param {*} next - Express next middleware function.
+   */
+  async loginRefreshToken (req, res, next) {
+    try {
+      logger.silly('Refreshing access token', { body: req.body })
+
+      // Sanitize the input.
+      // The refresh token is sent in the body since it is considered more secure than sending it in the header (since headers can be logged in various places and be more vulnerable for CSRF-attacks, which is extra risky with a long-lived token).
+      req.body.refreshToken = sanitizeHtml(req.body.refreshToken)
+
+      // Decode the refresh token.
+      const decodedUser = await JsonWebToken.decodeUser(req.body.refreshToken, process.env.REFRESH_TOKEN_SECRET)
+
+      if (!decodedUser) {
+        throw new Error('Invalid refresh token')
+      }
+
+      // Create the new access token.
+      const accessToken = await JsonWebToken.encodeUser(decodedUser,
+        process.env.ACCESS_TOKEN_SECRET,
+        parseInt(process.env.ACCESS_TOKEN_LIFE)
+      )
+
+      // Send the new access token in the response.
+      res
+        .status(200)
+        .json({
+          access_token: accessToken
+        })
+
+      logger.silly('Refreshed access token')
+    } catch (error) {
+      // Refresh token failed.
+      // Status code is defaulted to 500 (Internal Server Error).
+      let httpStatusCode = 500
+
+      if (error.message === 'Invalid refresh token') {
+        httpStatusCode = 401
+      }
+
+      const err = new Error(LOGIN_CUSTOM_STATUS_CODES[httpStatusCode] || http.STATUS_CODES[httpStatusCode])
+      err.status = httpStatusCode
+      err.cause = error
+
+      next(err)
+    }
+  }
+
+  /**
    * Registers a user.
    *
    * @param {object} req - Express request object.

@@ -14,8 +14,11 @@ const controller = new AccountController()
 
 // Map HTTP verbs and route paths to controller actions.
 
-// Log in
+// Log in.
 router.post('/login', (req, res, next) => controller.login(req, res, next))
 
-// Register
+// Log in with a refresh token.
+router.post('/login/refresh', (req, res, next) => controller.loginRefreshToken(req, res, next))
+
+// Register.
 router.post('/register', (req, res, next) => controller.register(req, res, next))
